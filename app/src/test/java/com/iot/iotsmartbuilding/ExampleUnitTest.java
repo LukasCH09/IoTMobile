@@ -1,4 +1,4 @@
-package com.example.lukasbitter.iotmobile;
+package com.iot.iotsmartbuilding;
 
 import org.junit.Test;
 
