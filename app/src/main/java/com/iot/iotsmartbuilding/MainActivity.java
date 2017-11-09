@@ -3,6 +3,10 @@ package com.iot.iotsmartbuilding;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,25 +16,53 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import static com.iot.iotsmartbuilding.R.id.fragment_container;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        WriteFragment.OnFragmentInteractionListener,
+        ReadFragment.OnFragmentInteractionListener{
+
+        WriteFragment writeFragment;
+        ReadFragment readFragment;
+        public static android.app.FragmentManager fragmentManager;
+        String TAG = "testIoT";
+        public static final int WRITE_DRAWER = 1;
+        public static final int READ_DRAWER = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(findViewById(fragment_container)!= null){
+            if(savedInstanceState != null){
+                return;
+            }
+            Log.i(TAG, "onCreate: findViewById");
+
+            writeFragment = WriteFragment.newInstance("TEST1", "TEST2");
+
+            FragmentTransaction fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.fragment_container, writeFragment);
+            fragmentTransaction.commit();
+
+
+            if(writeFragment == null){
+                Log.i(TAG, "onCreate: mapFragment == null");
+            } else{
+                Log.i(TAG, "onCreate: mapFragment != null");
+            }
+            readFragment = new ReadFragment();
+
+        }
+
+        //-----------------------------------------------------------------------------------
+        // Toolbar / drawer / floating action button
+        //-----------------------------------------------------------------------------------
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -80,22 +112,41 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_write) {
+            onFragmentInteraction(1,WRITE_DRAWER);
+        } else if (id == R.id.nav_read) {
+            onFragmentInteraction(2,READ_DRAWER);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onFragmentInteraction(int position, int fragmentCaller ) {
+
+        Fragment fragmentToCall = null;
+
+        switch (fragmentCaller){
+            case READ_DRAWER:
+                fragmentToCall = readFragment;
+                break;
+            case WRITE_DRAWER:
+                fragmentToCall = writeFragment;
+                break;
+        }
+
+        Log.i(TAG, "onCreate: listFragment==null");
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        // Replace whatever is in the fragment_container view with this listFragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(fragment_container, fragmentToCall);
+        transaction.addToBackStack(null);
+        Log.i(TAG, "onCreate: addToBackStack");
+        // Commit the transaction
+        transaction.commit();
+        Log.i(TAG, "onCreate: commit");
+        Log.i(TAG, "onCreate: listFragment!=null");
     }
 }
