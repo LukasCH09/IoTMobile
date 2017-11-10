@@ -16,6 +16,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.text.DecimalFormat;
+
 import static com.iot.iotsmartbuilding.R.id.fragment_container;
 
 public class MainActivity extends AppCompatActivity
@@ -55,6 +58,9 @@ public class MainActivity extends AppCompatActivity
                 Log.i(TAG, "onCreate: mapFragment != null");
             }
             readFragment = new ReadFragment();
+
+            //Initialisation de la valeur pour le fragment write
+            writeFragment.aValue=50;
 
         }
 

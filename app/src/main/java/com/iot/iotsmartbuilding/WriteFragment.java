@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +27,8 @@ public class WriteFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    public int aValue;
 
     Button radiatorButton;
     Button lightButtonWR;
@@ -86,6 +90,8 @@ public class WriteFragment extends Fragment {
         roomText = (TextView)myView.findViewById(R.id.roomText);
         valueText = (TextView) myView.findViewById(R.id.valueText);
 
+        DecimalFormat df = new DecimalFormat("##");
+        valueText.setText(df.format(aValue) + "%");
 
         //Contrôler la pression sur le bouton radiator
         radiatorButton.setOnClickListener(new View.OnClickListener(){
@@ -119,7 +125,14 @@ public class WriteFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Add 10% to the value", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Add 5% to the value", Toast.LENGTH_SHORT).show();
+                if(aValue<100)
+                {
+                    aValue+=5;
+                }
+
+                DecimalFormat df = new DecimalFormat("##");
+                valueText.setText(df.format(aValue) + "%");
             }
         });
 
@@ -128,7 +141,14 @@ public class WriteFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Sub 10% to the value", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Sub 5% to the value", Toast.LENGTH_SHORT).show();
+                if(aValue>0)
+                {
+                    aValue-=5;
+                }
+
+                DecimalFormat df = new DecimalFormat("##");
+                valueText.setText(df.format(aValue) + "%");
             }
         });
 
