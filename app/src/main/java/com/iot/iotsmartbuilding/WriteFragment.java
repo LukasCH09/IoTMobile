@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 /**
@@ -22,6 +25,14 @@ public class WriteFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    Button radiatorButton;
+    Button lightButtonWR;
+    Button storeButton;
+    Button plusButton;
+    Button minButton;
+    TextView roomText;
+    TextView valueText;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -64,7 +75,66 @@ public class WriteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_write, container, false);
+        View myView = inflater.inflate(R.layout.fragment_write, container, false);
+
+        //Récupération des objets se trouvant dans le layout
+        radiatorButton = (Button) myView.findViewById(R.id.radiatorButton);
+        lightButtonWR = (Button) myView.findViewById(R.id.lightButtonWR);
+        storeButton = (Button) myView.findViewById(R.id.storeButton);
+        plusButton = (Button) myView.findViewById(R.id.plusButton);
+        minButton = (Button) myView.findViewById(R.id.minButton);
+        roomText = (TextView)myView.findViewById(R.id.roomText);
+        valueText = (TextView) myView.findViewById(R.id.valueText);
+
+
+        //Contrôler la pression sur le bouton radiator
+        radiatorButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Send the value to the radiator", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Contrôler la pression sur le bouton light
+        lightButtonWR.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Send the value to the light", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Contrôler la pression sur le bouton store
+        storeButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Send the value to the store", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Contrôler la pression sur le bouton "+"
+        plusButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Add 10% to the value", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Contrôler la pression sur le bouton "-"
+        minButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Sub 10% to the value", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        return myView;
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

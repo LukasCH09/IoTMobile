@@ -7,6 +7,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 /**
@@ -22,6 +26,13 @@ public class ReadFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    //Déclaration des objets utilisés
+    Button temperatureButton;
+    Button presenceButton;
+    Button humidityButton;
+    Button lightButton;
+    TextView roomNumber;
+    TextView result;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -64,7 +75,54 @@ public class ReadFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_read, container, false);
+        View myView = inflater.inflate(R.layout.fragment_read, container, false);
+
+        //Récupération des objets se trouvant dans le layout
+        temperatureButton = (Button) myView.findViewById(R.id.temperatureButton);
+        humidityButton = (Button) myView.findViewById(R.id.humidityButton);
+        presenceButton = (Button) myView.findViewById(R.id.presenceButton);
+        lightButton = (Button) myView.findViewById(R.id.lightButton);
+        roomNumber = (TextView)myView.findViewById(R.id.roomNumber);
+        result = (TextView) myView.findViewById(R.id.result);
+
+
+        //Contrôler la pression sur le bouton temperature
+        temperatureButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Print the result of the temperature", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Contrôler la pression sur le bouton humidity
+        humidityButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Print the result of the humidity", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Contrôler la pression sur le bouton presence
+        presenceButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Print the result of the presence", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Contrôler la pression sur le bouton light
+        lightButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Print the result of the light", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return myView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -105,4 +163,6 @@ public class ReadFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(int position, int fragmentCaller  );
     }
+
+
 }
