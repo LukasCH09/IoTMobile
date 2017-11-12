@@ -8,9 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -22,17 +26,14 @@ import android.widget.Toast;
  * create an instance of this fragment.
  */
 public class ReadFragment extends Fragment {
+
+    private static final String TAG = "ReadFragment";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    //Déclaration des objets utilisés
-    Button temperatureButton;
-    Button presenceButton;
-    Button humidityButton;
-    Button lightButton;
     TextView roomNumber;
-    TextView result;
+    TextView resultText;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -78,12 +79,12 @@ public class ReadFragment extends Fragment {
         View myView = inflater.inflate(R.layout.fragment_read, container, false);
 
         //Récupération des objets se trouvant dans le layout
-        temperatureButton = (Button) myView.findViewById(R.id.temperatureButton);
-        humidityButton = (Button) myView.findViewById(R.id.humidityButton);
-        presenceButton = (Button) myView.findViewById(R.id.presenceButton);
-        lightButton = (Button) myView.findViewById(R.id.lightButton);
-        roomNumber = (TextView)myView.findViewById(R.id.roomNumber);
-        result = (TextView) myView.findViewById(R.id.result);
+        Button temperatureButton = myView.findViewById(R.id.temperatureButton);
+        Button humidityButton = myView.findViewById(R.id.humidityButton);
+        Button presenceButton = myView.findViewById(R.id.presenceButton);
+        Button lightButton = myView.findViewById(R.id.lightButton);
+        roomNumber = myView.findViewById(R.id.roomNumber);
+        resultText = myView.findViewById(R.id.result);
 
 
         //Contrôler la pression sur le bouton temperature
@@ -91,7 +92,8 @@ public class ReadFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Print the result of the temperature", Toast.LENGTH_SHORT).show();
+                processGETRequest(v, "temperature");
+                Toast.makeText(getContext(), "Print the resultText of the temperature", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -100,7 +102,8 @@ public class ReadFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Print the result of the humidity", Toast.LENGTH_SHORT).show();
+                processGETRequest(v, "humidity");
+                Toast.makeText(getContext(), "Print the resultText of the humidity", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -109,7 +112,8 @@ public class ReadFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Print the result of the presence", Toast.LENGTH_SHORT).show();
+                processGETRequest(v, "presence");
+                Toast.makeText(getContext(), "Print the resultText of the presence", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -118,10 +122,10 @@ public class ReadFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Print the result of the light", Toast.LENGTH_SHORT).show();
+                processGETRequest(v, "light");
+                Toast.makeText(getContext(), "Print the resultText of the light", Toast.LENGTH_SHORT).show();
             }
         });
-
         return myView;
     }
 
@@ -130,6 +134,22 @@ public class ReadFragment extends Fragment {
         if (mListener != null) {
             //mListener.onFragmentInteraction(uri);
         }
+    }
+
+    private void processGETRequest(View v, String ressource) {
+        Utils.processRequest(v.getContext(), ressource, Request.Method.GET,  null,
+                new Utils.VolleyCallback() {
+
+                    @Override
+                    public void onSuccessResponse(JSONObject result) {
+                        try {
+                            String response = result.getString("args");
+                            resultText.setText(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     @Override
@@ -163,6 +183,4 @@ public class ReadFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(int position, int fragmentCaller  );
     }
-
-
 }
