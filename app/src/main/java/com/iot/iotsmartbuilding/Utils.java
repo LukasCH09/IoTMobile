@@ -21,15 +21,17 @@ class Utils {
         void onSuccessResponse(JSONObject result);
     }
 
-    static void processRequest(final Context ctxt, String ressource, int method,
+    static void processRequest(final Context ctxt, String port ,String ressource, int method,
                                JSONObject jsonValue, final VolleyCallback callback){
-        String server = "192.168.1.1";
-        String url = server + "/" + ressource;
+        String server = "http://192.168.2.1:"; //5000
+        String url = server + port + "/" + ressource;
 
         String testurl = "https://postman-echo.com/get?test=123";
 
+        Log.i(TAG, "processRequest -> URL: "+url);
+
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (method, testurl, null, new Response.Listener<JSONObject>() {
+                (method, url, jsonValue, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {

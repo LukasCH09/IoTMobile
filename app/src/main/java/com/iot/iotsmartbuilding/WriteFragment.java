@@ -4,12 +4,22 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 
@@ -27,6 +37,7 @@ public class WriteFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "WriteFragment";
 
     public int aValue;
 
@@ -37,6 +48,7 @@ public class WriteFragment extends Fragment {
     Button minButton;
     TextView roomText;
     TextView valueText;
+    Spinner spinner;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -80,18 +92,70 @@ public class WriteFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View myView = inflater.inflate(R.layout.fragment_write, container, false);
+        //-----------------------------------------------------------------------------------
+        //SPINNER
+        //-----------------------------------------------------------------------------------
+        //Récupération du Spinner déclaré dans le fichier main.xml de res/layout
+        spinner = myView.findViewById(R.id.spinner);
+        //Le Spinner a besoin d'un adapter pour sa presentation alors on lui passe le context(this) et
+        // un fichier de presentation par défaut( android.R.layout.simple_spinner_item)
+        //Avec la liste des elements (exemple)
+        ArrayAdapter adapter = new ArrayAdapter(getContext(),
+                android.R.layout.simple_spinner_item,
+                MainActivity.exempleList
+        );
 
+        // On definit une présentation du spinner quand il est déroulé (android.R.layout.simple_spinner_dropdown_item)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //Enfin on passe l'adapter au Spinner et c'est tout
+        spinner.setAdapter(adapter);
+        Log.i(TAG, "onCreateView:  set postion  "+MainActivity.spinnerPosition);
+        //spinner.setSelection(MainActivity.spinnerPosition,false);
+        spinner.post(new Runnable() {
+            public void run() {
+                spinner.setSelection(MainActivity.spinnerPosition);
+            }
+        });
+
+        //---------------------------------------------------------------------------------------------------------------
         //Récupération des objets se trouvant dans le layout
         radiatorButton = (Button) myView.findViewById(R.id.radiatorButton);
         lightButtonWR = (Button) myView.findViewById(R.id.lightButtonWR);
         storeButton = (Button) myView.findViewById(R.id.storeButton);
         plusButton = (Button) myView.findViewById(R.id.plusButton);
         minButton = (Button) myView.findViewById(R.id.minButton);
-        roomText = (TextView)myView.findViewById(R.id.roomText);
+        //roomText = (TextView)myView.findViewById(R.id.roomText);
         valueText = (TextView) myView.findViewById(R.id.valueText);
 
         DecimalFormat df = new DecimalFormat("##");
         valueText.setText(df.format(aValue) + "%");
+
+        spinner.setOnTouchListener(new Spinner.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                MainActivity.selection=true;
+                return false;
+            }
+        });
+        spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener(){
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Log.i("WriteFragment", "WriteFragment:  selection vlaue: " + MainActivity.selection);
+                if(MainActivity.selection)
+                {
+                    MainActivity.spinnerPosition = i;
+                    Log.i(TAG, "onCreateView:  j'y suis "+i);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+
+        });
 
         //Contrôler la pression sur le bouton radiator
         radiatorButton.setOnClickListener(new View.OnClickListener(){
@@ -99,6 +163,13 @@ public class WriteFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Send the value to the radiator", Toast.LENGTH_SHORT).show();
+                JSONObject jsonvalue = new JSONObject();
+                try {
+                    jsonvalue.put("value", aValue);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                processPOSTRequest(v,"5500","radiator/" + MainActivity.floorID + MainActivity.radiatorID,jsonvalue);
             }
         });
 
@@ -108,7 +179,17 @@ public class WriteFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Send the value to the light", Toast.LENGTH_SHORT).show();
+                JSONObject jsonvalue = new JSONObject();
+                try {
+
+                    jsonvalue.put("node_id", MainActivity.dimmerID);
+                    jsonvalue.put("value", aValue);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                processPOSTRequest(v,"5000","dimmers/set_level",jsonvalue);
             }
+
         });
 
         //Contrôler la pression sur le bouton store
@@ -117,6 +198,13 @@ public class WriteFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Send the value to the store", Toast.LENGTH_SHORT).show();
+                JSONObject jsonvalue = new JSONObject();
+                try {
+                    jsonvalue.put("value", aValue);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                processPOSTRequest(v,"5500","store/" + MainActivity.floorID + MainActivity.storeID,jsonvalue);
             }
         });
 
@@ -149,6 +237,7 @@ public class WriteFragment extends Fragment {
 
                 DecimalFormat df = new DecimalFormat("##");
                 valueText.setText(df.format(aValue) + "%");
+
             }
         });
 
@@ -181,6 +270,22 @@ public class WriteFragment extends Fragment {
         mListener = null;
     }
 
+    private void processPOSTRequest(View v, String port ,String ressource,JSONObject obj) {
+        Utils.processRequest(v.getContext(), port, ressource, Request.Method.POST,  obj,
+                new Utils.VolleyCallback() {
+
+                    @Override
+                    public void onSuccessResponse(JSONObject result) {
+                        try {
+                            Log.i(TAG, "onSuccessResponse -> result: "  +result);
+                            String response = result.getString("value");
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

@@ -12,7 +12,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Spinner;
+
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.iot.iotsmartbuilding.R.id.fragment_container;
 
@@ -21,12 +27,25 @@ public class MainActivity extends AppCompatActivity
         WriteFragment.OnFragmentInteractionListener,
         ReadFragment.OnFragmentInteractionListener{
 
-        WriteFragment writeFragment;
+    WriteFragment writeFragment;
         ReadFragment readFragment;
         public static android.app.FragmentManager fragmentManager;
         String TAG = "testIoT";
         public static final int WRITE_DRAWER = 1;
         public static final int READ_DRAWER = 2;
+        public static String storeID="1";
+        public static String radiatorID="1";
+        public static String dimmerID="4";
+        public static String sensorID="3";
+        public static String floorID="4";
+
+        Spinner spinner;
+        public static List exempleList;
+        public static int spinnerPosition=0;
+        public static boolean selection=false;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +77,11 @@ public class MainActivity extends AppCompatActivity
             writeFragment.aValue=50;
 
         }
+
+        //Création d'une liste d'élément à mettre dans le Spinner(pour l'exemple)
+        exempleList = new ArrayList();
+        exempleList.add("Room 1");
+        exempleList.add("Room 2");
 
         //-----------------------------------------------------------------------------------
         // Toolbar / drawer / floating action button
@@ -132,9 +156,13 @@ public class MainActivity extends AppCompatActivity
         switch (fragmentCaller){
             case READ_DRAWER:
                 fragmentToCall = readFragment;
+                Log.i("WriteFragment", "MainActivity:  set selection to false ");
+                selection=false;
                 break;
             case WRITE_DRAWER:
                 fragmentToCall = writeFragment;
+                Log.i("WriteFragment", "MainActivity:  set selection to false ");
+                selection=false;
                 break;
         }
 
