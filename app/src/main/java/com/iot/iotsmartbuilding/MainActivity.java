@@ -1,5 +1,11 @@
 package com.iot.iotsmartbuilding;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Region;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -15,10 +21,16 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.estimote.coresdk.observation.region.beacon.BeaconRegion;
+import com.estimote.coresdk.recognition.packets.Beacon;
+import com.estimote.coresdk.service.BeaconManager;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.iot.iotsmartbuilding.R.id.fragment_container;
 
@@ -44,6 +56,8 @@ public class MainActivity extends AppCompatActivity
         public static int spinnerPosition=0;
         public static boolean selection=false;
 
+        private BeaconManager beaconManager;
+        private BeaconRegion beaconRegion;
 
 
 
@@ -77,12 +91,39 @@ public class MainActivity extends AppCompatActivity
             writeFragment.aValue=50;
 
         }
-
+        //Création de la liste en fonction des bicons détecté
         //Création d'une liste d'élément à mettre dans le Spinner(pour l'exemple)
         exempleList = new ArrayList();
         exempleList.add("Room 1");
         exempleList.add("Room 2");
 
+        //-----------------------------------------------------------------------------------
+        // Beacon
+        //-----------------------------------------------------------------------------------
+        beaconManager = new BeaconManager (getApplicationContext());
+        beaconRegion = new BeaconRegion("blueberry10", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), 21745, 32753);
+
+
+        beaconManager.setMonitoringListener(new BeaconManager.BeaconMonitoringListener() {
+            @Override
+            public void onEnteredRegion(BeaconRegion beaconRegion, List<Beacon> beacons) {
+                showNotification("beacon detected","Hello");
+                Log.i(TAG, "onEnteredRegion: beacon detected ");
+            }
+
+            @Override
+            public void onExitedRegion(BeaconRegion beaconRegion) {
+                Log.i(TAG, "onExitRegion: ");
+            }
+        });
+        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+            @Override
+            public void onServiceReady() {
+                Log.i(TAG, "onServiceReady ");
+                beaconManager.startMonitoring(beaconRegion);
+               // beaconManager.setBackgroundScanPeriod(50000, 0);
+            }
+        });
         //-----------------------------------------------------------------------------------
         // Toolbar / drawer / floating action button
         //-----------------------------------------------------------------------------------
@@ -178,4 +219,23 @@ public class MainActivity extends AppCompatActivity
         Log.i(TAG, "onCreate: commit");
         Log.i(TAG, "onCreate: listFragment!=null");
     }
+
+    public void showNotification(String title, String message) {
+        Intent notifyIntent = new Intent(this, MainActivity.class);
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,
+                new Intent[] { notifyIntent }, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification notification = new Notification.Builder(this)
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .build();
+        notification.defaults |= Notification.DEFAULT_SOUND;
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);
+    }
+
 }
