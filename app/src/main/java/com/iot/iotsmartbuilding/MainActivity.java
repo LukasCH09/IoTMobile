@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.estimote.coresdk.common.requirements.SystemRequirementsChecker;
 import com.estimote.coresdk.observation.region.beacon.BeaconRegion;
 import com.estimote.coresdk.recognition.packets.Beacon;
 import com.estimote.coresdk.service.BeaconManager;
@@ -59,7 +60,10 @@ public class MainActivity extends AppCompatActivity
         private BeaconManager beaconManager;
         private BeaconRegion beaconRegion;
 
-
+    private static final String ROOM_1_IDENTIFIER = "Room 1";
+    private static final String ROOM_1_UUID = "b9407f30-f5f8-466e-aff9-25556b57fe6d";
+    private static final String ROOM_2_IDENTIFIER = "Room 2";
+    private static final String ROOM_2_UUID = "b9407f30-f5f8-466e-aff9-25556b57fe6d";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,14 +98,12 @@ public class MainActivity extends AppCompatActivity
         //Création de la liste en fonction des bicons détecté
         //Création d'une liste d'élément à mettre dans le Spinner(pour l'exemple)
         exempleList = new ArrayList();
-        exempleList.add("Room 1");
-        exempleList.add("Room 2");
 
         //-----------------------------------------------------------------------------------
         // Beacon
         //-----------------------------------------------------------------------------------
         beaconManager = new BeaconManager (getApplicationContext());
-        beaconRegion = new BeaconRegion("blueberry10", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), 21745, 32753);
+        //beaconRegion = new BeaconRegion("blueberry10", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), 21745, 32753); //32753
 
 
         beaconManager.setMonitoringListener(new BeaconManager.BeaconMonitoringListener() {
@@ -109,19 +111,42 @@ public class MainActivity extends AppCompatActivity
             public void onEnteredRegion(BeaconRegion beaconRegion, List<Beacon> beacons) {
                 showNotification("beacon detected","Hello");
                 Log.i(TAG, "onEnteredRegion: beacon detected ");
+                if (beaconRegion.getIdentifier() == ROOM_1_IDENTIFIER){
+                    exempleList.add("Room 1");
+                    showNotification("Room 1 detected","Hello");
+                    Log.i(TAG, "onEnteredRegion: Room 1 ");
+                } else if (beaconRegion.getIdentifier() == ROOM_2_IDENTIFIER){
+                    exempleList.add("Room 2");
+                    showNotification("Room 2 detected","Hello");
+                    Log.i(TAG, "onEnteredRegion: Room 2 ");
+                }
             }
 
             @Override
             public void onExitedRegion(BeaconRegion beaconRegion) {
                 Log.i(TAG, "onExitRegion: ");
+                if (beaconRegion.getIdentifier() == ROOM_1_IDENTIFIER){
+                    exempleList.remove("Room 1");
+                    showNotification("Exit room 1","Bye");
+                    Log.i(TAG, "onEnteredRegion: Room 1 ");
+                } else if (beaconRegion.getIdentifier() == ROOM_2_IDENTIFIER){
+                    exempleList.remove("Room 2");
+                    showNotification("Exit room 2","Bye");
+                    Log.i(TAG, "onEnteredRegion: Room 2 ");
+                }
             }
         });
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
-                Log.i(TAG, "onServiceReady ");
-                beaconManager.startMonitoring(beaconRegion);
-               // beaconManager.setBackgroundScanPeriod(50000, 0);
+                beaconManager.startMonitoring(new BeaconRegion(ROOM_1_IDENTIFIER,
+                        UUID.fromString(ROOM_1_UUID), 21745, 32753));
+
+
+                beaconManager.startMonitoring(new BeaconRegion(ROOM_2_IDENTIFIER,
+                        UUID.fromString(ROOM_2_UUID), 21745, 57473));
+
+
             }
         });
         //-----------------------------------------------------------------------------------
@@ -236,6 +261,13 @@ public class MainActivity extends AppCompatActivity
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, notification);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SystemRequirementsChecker.checkWithDefaultDialogs(this);
     }
 
 }
