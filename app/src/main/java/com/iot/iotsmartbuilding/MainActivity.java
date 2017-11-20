@@ -46,10 +46,10 @@ public class MainActivity extends AppCompatActivity
         String TAG = "testIoT";
         public static final int WRITE_DRAWER = 1;
         public static final int READ_DRAWER = 2;
-        public static String storeID="1";
-        public static String radiatorID="1";
-        public static String dimmerID="4";
-        public static String sensorID="3";
+        public static String storeID="1"; //ou 2
+        public static String radiatorID="1"; // ou 2
+        public static String dimmerID="4"; // ou 5
+        public static String sensorID="3"; // ou 6
         public static String floorID="4";
 
         Spinner spinner;

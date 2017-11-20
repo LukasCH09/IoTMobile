@@ -21,9 +21,9 @@ class Utils {
         void onSuccessResponse(JSONObject result);
     }
 
-    static void processRequest(final Context ctxt, String port ,String ressource, int method,
+    static void processRequest(final Context ctxt, String server, String port ,String ressource, int method,
                                JSONObject jsonValue, final VolleyCallback callback){
-        String server = "http://192.168.2.1:"; //5000
+
         String url = server + port + "/" + ressource;
 
         String testurl = "https://postman-echo.com/get?test=123";

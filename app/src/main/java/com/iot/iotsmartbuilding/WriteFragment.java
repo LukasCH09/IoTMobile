@@ -146,6 +146,42 @@ public class WriteFragment extends Fragment {
                 if(MainActivity.selection)
                 {
                     MainActivity.spinnerPosition = i;
+                    if(MainActivity.exempleList.get(i)=="Room 1")
+                    {
+                        JSONObject jsonvalue = new JSONObject();
+                        try {
+                            jsonvalue.put("MajorID", 32753);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        processAmazon(view, jsonvalue);
+                        Toast.makeText(getContext(), "Ask Value for Room1", Toast.LENGTH_SHORT).show();
+
+                       /* MainActivity.storeID="1"; //ou 2
+                        MainActivity.radiatorID="1"; // ou 2
+                        MainActivity.dimmerID="4"; // ou 5
+                        MainActivity.sensorID="3"; // ou 6
+                        MainActivity.floorID="4";*/
+
+                    }
+                    else if(MainActivity.exempleList.get(i)=="Room 2")
+                    {
+                        JSONObject jsonvalue = new JSONObject();
+                        try {
+                            jsonvalue.put("MajorID", 57473);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        processAmazon(view, jsonvalue);
+
+                        Toast.makeText(getContext(), "Ask Value for Room2", Toast.LENGTH_SHORT).show();
+
+                       /* MainActivity.storeID="2"; //ou 2
+                        MainActivity.radiatorID="2"; // ou 2
+                        MainActivity.dimmerID="5"; // ou 5
+                        MainActivity.sensorID="6"; // ou 6
+                        MainActivity.floorID="4";*/
+                    }
                     Log.i(TAG, "onCreateView:  j'y suis "+i);
                 }
             }
@@ -271,7 +307,8 @@ public class WriteFragment extends Fragment {
     }
 
     private void processPOSTRequest(View v, String port ,String ressource,JSONObject obj) {
-        Utils.processRequest(v.getContext(), port, ressource, Request.Method.POST,  obj,
+        String server = "http://192.168.2.1:"; //5000
+        Utils.processRequest(v.getContext(),server, port, ressource, Request.Method.POST,  obj,
                 new Utils.VolleyCallback() {
 
                     @Override
@@ -286,6 +323,30 @@ public class WriteFragment extends Fragment {
                     }
                 });
     }
+
+
+    private void processAmazon(View v, JSONObject obj) {
+        String server = "https://0mcll40zmf.execute-api.us-west-2.amazonaws.com/prod/beaconRanging"; //5000
+        Utils.processRequest(v.getContext(),server,"", "", Request.Method.GET,  obj,
+                new Utils.VolleyCallback() {
+
+                    @Override
+                    public void onSuccessResponse(JSONObject result) {
+                        try {
+                            Log.i(TAG, "onSuccessResponse -> result: "  +result);
+                            MainActivity.storeID = result.getString("storeID");
+                            MainActivity.radiatorID = result.getString("radiatorID");
+                            MainActivity.dimmerID = result.getString("dimmerID");
+                            MainActivity.sensorID = result.getString("sensorID");
+                            MainActivity.floorID = result.getString("floorID");
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
