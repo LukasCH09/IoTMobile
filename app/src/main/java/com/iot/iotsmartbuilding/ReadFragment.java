@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,9 +20,6 @@ import com.android.volley.Request;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -41,7 +37,6 @@ public class ReadFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    TextView roomNumber;
     TextView resultText;
     int measure;
     Spinner spinner;
@@ -122,7 +117,6 @@ public class ReadFragment extends Fragment {
         Button humidityButton = myView.findViewById(R.id.humidityButton);
         Button presenceButton = myView.findViewById(R.id.presenceButton);
         Button lightButton = myView.findViewById(R.id.lightButton);
-        //roomNumber = myView.findViewById(R.id.roomNumber);
         resultText = myView.findViewById(R.id.result);
 
         spinner.setOnTouchListener(new Spinner.OnTouchListener() {
@@ -146,7 +140,7 @@ public class ReadFragment extends Fragment {
                     {
                         JSONObject jsonvalue = new JSONObject();
                         try {
-                            jsonvalue.put("MajorID", 32753);
+                            jsonvalue.put("MajorID", "32753");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -164,7 +158,7 @@ public class ReadFragment extends Fragment {
                     {
                         JSONObject jsonvalue = new JSONObject();
                         try {
-                            jsonvalue.put("MajorID", 57473);
+                            jsonvalue.put("MajorID", "57473");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -284,7 +278,7 @@ public class ReadFragment extends Fragment {
 
     private void processAmazon(View v, JSONObject obj) {
         String server = "https://0mcll40zmf.execute-api.us-west-2.amazonaws.com/prod/beaconRanging"; //5000
-        Utils.processRequest(v.getContext(),server, "", "", Request.Method.GET,  obj,
+        Utils.processRequest(v.getContext(),server, "", "", Request.Method.POST,  obj,
                 new Utils.VolleyCallback() {
 
                     @Override
@@ -333,7 +327,6 @@ public class ReadFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(int position, int fragmentCaller  );
     }
 }

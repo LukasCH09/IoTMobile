@@ -46,7 +46,6 @@ public class WriteFragment extends Fragment {
     Button storeButton;
     Button plusButton;
     Button minButton;
-    TextView roomText;
     TextView valueText;
     Spinner spinner;
 
@@ -119,13 +118,12 @@ public class WriteFragment extends Fragment {
 
         //---------------------------------------------------------------------------------------------------------------
         //Récupération des objets se trouvant dans le layout
-        radiatorButton = (Button) myView.findViewById(R.id.radiatorButton);
-        lightButtonWR = (Button) myView.findViewById(R.id.lightButtonWR);
-        storeButton = (Button) myView.findViewById(R.id.storeButton);
-        plusButton = (Button) myView.findViewById(R.id.plusButton);
-        minButton = (Button) myView.findViewById(R.id.minButton);
-        //roomText = (TextView)myView.findViewById(R.id.roomText);
-        valueText = (TextView) myView.findViewById(R.id.valueText);
+        radiatorButton = myView.findViewById(R.id.radiatorButton);
+        lightButtonWR = myView.findViewById(R.id.lightButtonWR);
+        storeButton = myView.findViewById(R.id.storeButton);
+        plusButton = myView.findViewById(R.id.plusButton);
+        minButton = myView.findViewById(R.id.minButton);
+        valueText = myView.findViewById(R.id.valueText);
 
         DecimalFormat df = new DecimalFormat("##");
         valueText.setText(df.format(aValue) + "%");
@@ -142,15 +140,16 @@ public class WriteFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-                Log.i("WriteFragment", "WriteFragment:  selection vlaue: " + MainActivity.selection);
+                Log.i("WriteFragment", "WriteFragment.onItemSelected:  selection value: " + MainActivity.selection);
                 if(MainActivity.selection)
                 {
                     MainActivity.spinnerPosition = i;
+                    Log.i(TAG, "onItemSelected: exampleList.get(i)" + MainActivity.exempleList.get(i));
                     if(MainActivity.exempleList.get(i)=="Room 1")
                     {
                         JSONObject jsonvalue = new JSONObject();
                         try {
-                            jsonvalue.put("MajorID", 32753);
+                            jsonvalue.put("MajorID", "32753");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -168,7 +167,7 @@ public class WriteFragment extends Fragment {
                     {
                         JSONObject jsonvalue = new JSONObject();
                         try {
-                            jsonvalue.put("MajorID", 57473);
+                            jsonvalue.put("MajorID", "57473");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -182,7 +181,7 @@ public class WriteFragment extends Fragment {
                         MainActivity.sensorID="6"; // ou 6
                         MainActivity.floorID="4";*/
                     }
-                    Log.i(TAG, "onCreateView:  j'y suis "+i);
+                    Log.i(TAG, "WriteFragment.onItemSelected:  j'y suis "+i);
                 }
             }
 
@@ -327,7 +326,8 @@ public class WriteFragment extends Fragment {
 
     private void processAmazon(View v, JSONObject obj) {
         String server = "https://0mcll40zmf.execute-api.us-west-2.amazonaws.com/prod/beaconRanging"; //5000
-        Utils.processRequest(v.getContext(),server,"", "", Request.Method.GET,  obj,
+        Log.i(TAG, "processAmazon: processing request");
+        Utils.processRequest(v.getContext(),server,"", "", Request.Method.POST,  obj,
                 new Utils.VolleyCallback() {
 
                     @Override

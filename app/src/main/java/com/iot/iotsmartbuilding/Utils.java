@@ -29,12 +29,14 @@ class Utils {
         String testurl = "https://postman-echo.com/get?test=123";
 
         Log.i(TAG, "processRequest -> URL: "+url);
+        Log.i(TAG, "processRequest -> jsonValue: "+jsonValue);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (method, url, jsonValue, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
+                        Log.i(TAG, "onResponse: " + response);
                         callback.onSuccessResponse(response);
                     }
                 }, new Response.ErrorListener() {

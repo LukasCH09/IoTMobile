@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Region;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -18,17 +17,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.estimote.coresdk.common.requirements.SystemRequirementsChecker;
 import com.estimote.coresdk.observation.region.beacon.BeaconRegion;
 import com.estimote.coresdk.recognition.packets.Beacon;
 import com.estimote.coresdk.service.BeaconManager;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -58,7 +53,6 @@ public class MainActivity extends AppCompatActivity
         public static boolean selection=false;
 
         private BeaconManager beaconManager;
-        private BeaconRegion beaconRegion;
 
     private static final String ROOM_1_IDENTIFIER = "Room 1";
     private static final String ROOM_1_UUID = "b9407f30-f5f8-466e-aff9-25556b57fe6d";
@@ -95,7 +89,7 @@ public class MainActivity extends AppCompatActivity
             writeFragment.aValue=50;
 
         }
-        //Création de la liste en fonction des bicons détecté
+        //Création de la liste en fonction des beacons détecté
         //Création d'une liste d'élément à mettre dans le Spinner(pour l'exemple)
         exempleList = new ArrayList();
 
@@ -152,22 +146,22 @@ public class MainActivity extends AppCompatActivity
         //-----------------------------------------------------------------------------------
         // Toolbar / drawer / floating action button
         //-----------------------------------------------------------------------------------
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -209,7 +203,7 @@ public class MainActivity extends AppCompatActivity
             onFragmentInteraction(2,READ_DRAWER);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
